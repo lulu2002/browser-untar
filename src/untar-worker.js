@@ -1,5 +1,3 @@
-import Untar from 'untar';
-
 class UntarWorker {
 
   static onmessage = (message) => {
@@ -91,7 +89,7 @@ class PaxHeader {
       // Decode bytes up to the first space character; that is the total field length
       var fieldLength = parseInt(decodeUTF8(bytes.subarray(0, bytes.indexOf(0x20))));
       var fieldText = decodeUTF8(bytes.subarray(0, fieldLength));
-      var fieldMatch = fieldText.match(Untar.reg1);
+      var fieldMatch = fieldText.match(/^\d+ ([^=]+)=(.*)\n$/);
 
       if (fieldMatch === null) {
         throw new Error("Invalid PAX header data format.");
@@ -102,7 +100,7 @@ class PaxHeader {
 
       if (fieldValue.length === 0) {
         fieldValue = null;
-      } else if (fieldValue.match(Untar.reg2) !== null) {
+      } else if (fieldValue.match(/^\d+$/) !== null) {
         // If it's a integer field, parse it as int
         fieldValue = parseInt(fieldValue);
       }

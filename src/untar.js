@@ -6,12 +6,9 @@ class Untar {
    * @private
    */
   static _instance = undefined;
-  static _desiredWorkerPoolLength = 4;
-  static _workerTrimInterval = 500;
-  static CHUNK_SIZE = 1000;
-
-  static reg1 = /^\d+ ([^=]+)=(.*)\n$/;
-  static reg2 = /^\d+$/;
+  static _desiredWorkerPoolLength = 5;
+  static _workerTrimInterval = 1000;
+  static CHUNK_SIZE = 255;
 
   /**
    * Get the singleton manager instance.
