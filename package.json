@@ -2,7 +2,7 @@
   "name": "browser-untar",
   "version": "0.0.1",
   "description": "Quick and relyable untar in the browser.",
-  "main": "browser-untar.js",
+  "main": "./dist/browser-untar.js",
   "author": "Pablo Jomer",
   "scripts": {
     "build": "webpack",
