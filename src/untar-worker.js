@@ -1,6 +1,6 @@
 class UntarWorker {
 
-  static onmessage = (message) => {
+  static onmessage(message) {
     const data = message.data;
     try {
       if (data.type === "e") {
@@ -13,15 +13,15 @@ class UntarWorker {
     }
   };
 
-  static postError = (e) => {
+  static postError(e) {
     UntarWorker.postMessage({ type: "err", message: e.message });
   };
 
-  static postMessage = (message, transfers) => {
-    self.postMessage(message, transfers);
-  };
+  static postMessage(message, transfere){
+    self.postMessage(message, transfere);
+  }
 
-  static untarBuffer = (arrayBuffer) => {
+  static untarBuffer(arrayBuffer){
     try {
       const tarFileStream = new UntarFileStream(arrayBuffer);
       while (tarFileStream.hasNext()) {
@@ -324,7 +324,5 @@ class UntarFileStream {
 
 if (typeof self !== "undefined") {
   // We're running in a worker thread
-  self.onmessage = function(message) {
-    UntarWorker.onmessage(message);
-  };
+  self.onmessage = UntarWorker.onmessage;
 }
