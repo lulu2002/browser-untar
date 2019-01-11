@@ -1,0 +1,25 @@
+{
+  "root": true,
+  "extends": "eslint:recommended",
+  "globals": {
+    "wp": true,
+    "createImageBitmap": true
+  },
+  "env": {
+    "amd": true,
+    "browser": true,
+    "node": true,
+    "es6": true
+  },
+  "rules":{
+    "curly": 2,
+    "no-console": 0,
+    "no-var": 2,
+    "prefer-const": 2,
+    "no-const-assign": 2,
+    "no-array-constructor": 2,
+    "no-param-reassign": 2,
+    "quotes": [2, "single"]
+  },
+  "parser": "babel-eslint"
+}
