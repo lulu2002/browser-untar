@@ -37,3 +37,6 @@ If you want to build the project your self do the following.
 
 ## Tests
 No tests but hopefully coming soon.
+
+## Sources
+This project was based on js-untar and much of the code has been adapted from that project.
