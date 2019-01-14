@@ -30,6 +30,7 @@ class UntarWorker {
       }
 
       UntarWorker.postMessage({ type: "c" });
+      tarFileStream.destroy();
     } catch (err) {
       UntarWorker.postError(err);
     }
@@ -149,6 +150,10 @@ class UntarStream {
     this._position = 0;
   }
 
+  destroy(){
+    this._bufferView = undefined;
+  }
+
   readString = (charCount) => {
     const charSize = 1;
     const byteCount = charCount * charSize;
@@ -212,7 +217,9 @@ class UntarFileStream {
   }
 
   destroy(){
-    this._stream
+    this._stream.destroy();
+    this._stream = undefined;
+    this._globalPaxHeader = undefined;
   }
 
   hasNext = () => {

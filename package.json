@@ -6,7 +6,7 @@
   "author": "Pablo Jomer",
   "scripts": {
     "build": "webpack",
-    "postbuild" : "node postBuild.js",
+    "postbuild": "node postBuild.js",
     "test": "mocha --compilers js:babel-core/register --require test/helpers/cssNoOpPreProcessor.js --require test/helpers/browser.js --recursive ./test/*/*.spec.js"
   },
   "dependencies": {
