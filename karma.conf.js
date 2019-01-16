@@ -5,7 +5,8 @@ module.exports = function(config) {
     basePath: '',
     frameworks: ['mocha', 'chai'],
     files: [
-      './spec/testIndex.js'
+      './spec/testIndex.js',
+      {pattern: './spec/data/*.tar', included: false}
     ],
 
     preprocessors: {
