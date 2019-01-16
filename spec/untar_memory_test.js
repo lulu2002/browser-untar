@@ -34,7 +34,9 @@ describe('Memory', function(){
       var chain = Promise.resolve();
       for(var i=0; i < 1000; ++i){
         chain = chain.then(function(){
-          return nextPromise(data.buffer.slice());
+          // TODO: Test with a larger tar.
+          var buf = data.buffer.slice();
+          return nextPromise(buf);
         }).then(Wait);
       }
       chain.then(function () {
