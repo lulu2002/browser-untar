@@ -8,7 +8,6 @@ const path = require('path');
 const inputFile = {
   'browser-untar_': ['./src/untar.js'],
   'untar-worker': ['./src/untar-worker.js'],
-  'testIndex': ['./spec/testIndex.js'],
 };
 const plugins = [];
 const minimizers = [];
