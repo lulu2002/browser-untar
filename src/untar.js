@@ -112,7 +112,7 @@ class Untar {
       };
 
       // Start the unpacking of a tared resource.
-      worker.postMessage({ type: "e", buffer }, [buffer]);
+      worker.postMessage({ type: "e", buffer: buffer }, [buffer]);
     }).finally(() => {
       worker.onerror = undefined;
       worker.onmessage = undefined;

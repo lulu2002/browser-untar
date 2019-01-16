@@ -5,8 +5,9 @@
   "main": "./dist/browser-untar.js",
   "author": "Pablo Jomer",
   "scripts": {
-    "build": "webpack && node postBuild.js",
-    "postbuild": "karma start"
+    "build": "webpack ",
+    "postbuild": "node postBuild.js",
+    "test": "karma start"
   },
   "dependencies": {
     "@babel/core": "^7.2.2",
