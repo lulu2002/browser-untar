@@ -38,7 +38,7 @@ module.exports = {
     pathinfo: false,
     path: path.resolve(__dirname, 'dist'),
     filename: '[name].js',
-    globalObject: "this",
+    globalObject: 'this',
     library: 'browser-untar',
     libraryTarget: 'umd',
     umdNamedDefine: true
@@ -66,9 +66,18 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             cacheDirectory: './webpack_cache',
-            presets: ['env','stage-0'],
+            presets: [
+              '@babel/preset-env',
+            ],
             plugins: [
-              'transform-object-rest-spread'
+              '@babel/plugin-proposal-object-rest-spread',
+              '@babel/plugin-proposal-export-default-from',
+              '@babel/plugin-proposal-class-properties',
+              '@babel/plugin-proposal-logical-assignment-operators',
+              ['@babel/plugin-proposal-optional-chaining', { 'loose': false }],
+              ['@babel/plugin-proposal-pipeline-operator', { 'proposal': 'minimal' }],
+              ['@babel/plugin-proposal-nullish-coalescing-operator', { 'loose': false }],
+              '@babel/plugin-proposal-do-expressions',
             ]
           }
         }]
