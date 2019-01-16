@@ -2635,10 +2635,6 @@ json5@^2.1.0:
   dependencies:
     minimist "^1.2.0"
 
-karma-babel-preprocessor@^8.0.0:
-  version "8.0.0"
-  resolved "https://registry.yarnpkg.com/karma-babel-preprocessor/-/karma-babel-preprocessor-8.0.0.tgz#40639fa968bb14da65c2ccd507a68a5b398068cd"
-
 karma-chai@^0.1.0:
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/karma-chai/-/karma-chai-0.1.0.tgz#bee5ad40400517811ae34bb945f762909108b79a"

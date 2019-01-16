@@ -1,8 +1,5 @@
-import { expect} from 'chai';
-import { describe, it, /* beforeEach, afterEach*/} from 'mocha';
-
-describe('true', () => {
-  it('should be true', () => {
+describe('true', function(){
+  it('should be true', function(){
     expect(true).to.be.equal(true);
   });
 });

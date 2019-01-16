@@ -10,10 +10,10 @@ module.exports = function(config) {
 
     preprocessors: {
       './src/untar.js': [ 'webpack' ],
-      './spec/**/testIndex.js': [ 'babel' ],
+      './spec/testIndex.js': [ 'webpack' ],
     },
     webpack: webpackConfig,
-    reporters: ['progress'],
+    reporters: ['dots'],
     port: 9876,
     colors: true,
     logLevel: config.LOG_INFO,
@@ -29,7 +29,6 @@ module.exports = function(config) {
     },
     plugins: [
       'karma-chrome-launcher',
-      'karma-babel-preprocessor',
       'karma-webpack',
       'karma-mocha',
       'karma-chai'

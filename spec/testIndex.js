@@ -1,2 +1,2 @@
-const testContext = require.context('./', false, /^.*_test\.js$/);
-testContext.keys().forEach(testContext);
+var testsContext = require.context('.', true, /_test$/);
+testsContext.keys().forEach(testsContext);
