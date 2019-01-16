@@ -40,7 +40,31 @@ describe('Extraction', function(){
     loadFile('base/spec/data/test-pax.tar').then(function (data) {
       expect(data.status).to.equal(200);
       tarHelper.untar(data.buffer).then(function (files) {
-        console.log(files);
+        expect(files.length).to.equal(1);
+        expect(files[0].name).to.equal('é.txt');
+        done();
+      }).catch(done);
+    }).catch(done)
+  });
+
+
+  it('Should extract ustar tar file', function(done){
+    loadFile('base/spec/data/test-ustar.tar').then(function (data) {
+      expect(data.status).to.equal(200);
+      tarHelper.untar(data.buffer).then(function (files) {
+        expect(files.length).to.equal(1);
+        expect(files[0].name).to.equal('foo');
+        done();
+      }).catch(done);
+    }).catch(done)
+  });
+
+  it('Should extract ustar tar file with prefix', function(done){
+    loadFile('base/spec/data/test-ustar-with-prefix.tar').then(function (data) {
+      expect(data.status).to.equal(200);
+      tarHelper.untar(data.buffer).then(function (files) {
+        expect(files.length).to.equal(1);
+        expect(files[0].name).to.equal('directory-000/directory-001/directory-002/directory-003/directory-004/directory-005/directory-006/foo.txt');
         done();
       }).catch(done);
     }).catch(done)
