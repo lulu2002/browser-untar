@@ -1,14 +1,16 @@
+const babelConfig = require('./.babelrc.js');
 const webpack = require('webpack');
+process.traceDeprecation = true;
 const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 const path = require('path');
 /**const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;**/
 
-inputFile = {
+const inputFile = {
   'browser-untar_': ['./src/untar.js'],
   'untar-worker': ['./src/untar-worker.js'],
 };
-plugins = [];
-minimizers = [];
+const plugins = [];
+const minimizers = [];
 /**plugins.push(new BundleAnalyzerPlugin());**/
 plugins.push(new webpack.DefinePlugin({
   'process.env.NODE_ENV': '"production"'
@@ -66,19 +68,8 @@ module.exports = {
           loader: 'babel-loader',
           options: {
             cacheDirectory: './webpack_cache',
-            presets: [
-              '@babel/preset-env',
-            ],
-            plugins: [
-              '@babel/plugin-proposal-object-rest-spread',
-              '@babel/plugin-proposal-export-default-from',
-              '@babel/plugin-proposal-class-properties',
-              '@babel/plugin-proposal-logical-assignment-operators',
-              ['@babel/plugin-proposal-optional-chaining', { 'loose': false }],
-              ['@babel/plugin-proposal-pipeline-operator', { 'proposal': 'minimal' }],
-              ['@babel/plugin-proposal-nullish-coalescing-operator', { 'loose': false }],
-              '@babel/plugin-proposal-do-expressions',
-            ]
+            presets: babelConfig.presets,
+            plugins: babelConfig.plugins
           }
         }]
       },
