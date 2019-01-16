@@ -3,19 +3,19 @@ class UntarWorker {
   static onmessage(message) {
     const data = message.data;
     try {
-      if (data.type === "e") {
+      if (data.type === 'e') {
         UntarWorker.untarBuffer(data.buffer);
       } else {
-        throw new Error("Unknown message type: " + data.type);
+        throw new Error('Unknown message type: ' + data.type);
       }
     } catch ( e ) {
       UntarWorker.postError(e);
     }
-  };
+  }
 
   static postError(e) {
-    UntarWorker.postMessage({ type: "err", message: e.message });
-  };
+    UntarWorker.postMessage({ type: 'err', message: e.message });
+  }
 
   static postMessage(message, transfer){
     self.postMessage(message, transfer);
@@ -26,10 +26,10 @@ class UntarWorker {
       const tarFileStream = new UntarFileStream(arrayBuffer);
       while (tarFileStream.hasNext()) {
         const file = tarFileStream._readNextFile();
-        UntarWorker.postMessage({ type: "e", data: file }, [file.buffer]);
+        UntarWorker.postMessage({ type: 'e', data: file }, [file.buffer]);
       }
 
-      UntarWorker.postMessage({ type: "c" });
+      UntarWorker.postMessage({ type: 'c' });
       tarFileStream.destroy();
     } catch (err) {
       UntarWorker.postError(err);
@@ -39,40 +39,36 @@ class UntarWorker {
 
 // Source: https://gist.github.com/pascaldekloe/62546103a1576803dade9269ccf76330
 function decodeUTF8(bytes) {
-  let s = "";
-  const bytesLength = bytes.length;
-  const sC = String.fromCharCode;
-  const bS = "Incomplete byte sequence";
-  let i = 0;
-  while (i < bytesLength) {
-    let c = bytes[ i++ ];
-    if ( c > 127 ) {
-      if ( c > 191 && c < 224 ) {
-        if ( i >= bytesLength ) { throw bS; }
-        c = (c & 31) << 6 | bytes[ i ] & 63;
-      } else if ( c > 223 && c < 240 ) {
-        if ( i + 1 >= bytesLength) { throw bS; }
-        c = (c & 15) << 12 | (bytes[ i ] & 63) << 6 | bytes[ ++i ] & 63;
-      } else if ( c > 239 && c < 248 ) {
-        if ( i + 2 >= bytesLength ) { throw bS; }
-        c = (c & 7) << 18 | (bytes[ i ] & 63) << 12 | (bytes[ ++i ] & 63) << 6 | bytes[ ++i ] & 63;
-      } else {
-        throw 'Unknown multibyte start.';
+    let s = '';
+    let i = 0;
+    const bytesLength = bytes.length;
+    const fC = String.fromCharCode;
+    while (i < bytesLength) {
+      let c = bytes[i++];
+      if (c > 127) {
+        if (c > 191 && c < 224 && i < bytesLength) {
+          c = (c & 31) << 6 | bytes[i] & 63;
+        } else if (c < 240 && i + 1 < bytesLength) {
+          c = (c & 15) << 12 | (bytes[i] & 63) << 6 | bytes[++i] & 63;
+        } else if (c < 248 && i + 2 < bytesLength) {
+          c = (c & 7) << 18 | (bytes[i] & 63) << 12 | (bytes[++i] & 63) << 6 | bytes[++i] & 63;
+        } else {
+          throw 'UTF-8 decoding failed.';
+        }
+        ++i;
       }
-      ++i;
 
-      if ( c <= 0xffff ) {
-        s += sC( c );
-      } else if ( c <= 0x10ffff ) {
+      if (c <= 0xffff) {
+        s += fC(c);
+      } else if (c <= 0x10ffff) {
         c -= 0x10000;
-        s += sC( c >> 10 | 0xd800 );
-        s += sC( c & 0x3FF | 0xdc00 );
+        s += fC(c >> 10 | 0xd800);
+        s += fC(c & 0x3FF | 0xdc00);
       } else {
-        throw 'Code point exceeds UTF-16 reach';
+        throw 'UTF-8 decodeing failed.';
       }
     }
     return s;
-  }
 }
 
 class PaxHeader {
@@ -81,21 +77,21 @@ class PaxHeader {
   }
 
   static parse = function(buffer) {
-    var bytes = new Uint8Array(buffer);
-    var fields = [];
+    let bytes = new Uint8Array(buffer);
+    const fields = [];
 
     while (bytes.length > 0) {
       // Decode bytes up to the first space character; that is the total field length
-      var fieldLength = parseInt(decodeUTF8(bytes.subarray(0, bytes.indexOf(0x20))));
-      var fieldText = decodeUTF8(bytes.subarray(0, fieldLength));
-      var fieldMatch = fieldText.match(/^\d+ ([^=]+)=(.*)\n$/);
+      const fieldLength = parseInt(decodeUTF8(bytes.subarray(0, bytes.indexOf(0x20))));
+      const fieldText = decodeUTF8(bytes.subarray(0, fieldLength));
+      const fieldMatch = fieldText.match(/^\d+ ([^=]+)=(.*)\n$/);
 
       if (fieldMatch === null) {
-        throw new Error("Invalid PAX header data format.");
+        throw new Error('Invalid PAX header data format.');
       }
 
-      var fieldName = fieldMatch[1];
-      var fieldValue = fieldMatch[2];
+      const fieldName = fieldMatch[1];
+      let fieldValue = fieldMatch[2];
 
       if (fieldValue.length === 0) {
         fieldValue = null;
@@ -105,7 +101,7 @@ class PaxHeader {
       }
       // Don't parse float values since precision is lost
 
-      var field = {
+      const field = {
         name: fieldName,
         value: fieldValue
       };
@@ -121,18 +117,18 @@ class PaxHeader {
   applyHeader = (file) => {
     this._fields.forEach(function(field) {
       let fieldName = field.name;
-      let fieldValue = field.value;
+      const fieldValue = field.value;
 
-      if (fieldName === "path") {
+      if (fieldName === 'path') {
         // This overrides the name and prefix fields in the following header block.
-        fieldName = "name";
+        fieldName = 'name';
 
         if (file.prefix !== undefined) {
           delete file.prefix;
         }
-      } else if (fieldName === "linkpath") {
+      } else if (fieldName === 'linkpath') {
         // This overrides the linkname field in the following header block.
-        fieldName = "linkname";
+        fieldName = 'linkname';
       }
 
       if (fieldValue === null) {
@@ -176,7 +172,7 @@ class UntarStream {
   readBuffer = (byteCount) => {
     let buf;
 
-    if (typeof ArrayBuffer.prototype.slice === "function") {
+    if (typeof ArrayBuffer.prototype.slice === 'function') {
       buf = this._bufferView.buffer.slice(this.position(), this.position() + byteCount);
     } else {
       buf = new ArrayBuffer(byteCount);
@@ -248,7 +244,7 @@ class UntarFileStream {
     file.linkname = stream.readString(100);
     file.ustarFormat = stream.readString(6);
 
-    if (file.ustarFormat.indexOf("ustar") > -1) {
+    if (file.ustarFormat.indexOf('ustar') > -1) {
       file.version = stream.readString(2);
       file.uname = stream.readString(32);
       file.gname = stream.readString(32);
@@ -257,30 +253,30 @@ class UntarFileStream {
       file.namePrefix = stream.readString(155);
 
       if (file.namePrefix.length > 0) {
-        file.name = file.namePrefix + "/" + file.name;
+        file.name = file.namePrefix + '/' + file.name;
       }
     }
 
     stream.position(dataBeginPos);
 
     switch (file.type) {
-      case "0": // Normal file is either "0" or "\0".
-      case "": // In case of "\0", readString returns an empty string, that is "".
+      case '0': // Normal file is either "0" or "\0".
+      case '': // In case of "\0", readString returns an empty string, that is "".
         file.buffer = stream.readBuffer(file.size);
         break;
-      case "1": // Link to another file already archived
-      case "2": // Symbolic link
-      case "3": // Character special device (what does this mean??)
-      case "4": // Block special device
-      case "5": // Directory
-      case "6": // FIFO special file
-      case "7": // Reserved
+      case '1': // Link to another file already archived
+      case '2': // Symbolic link
+      case '3': // Character special device (what does this mean??)
+      case '4': // Block special device
+      case '5': // Directory
+      case '6': // FIFO special file
+      case '7': // Reserved
         break;
-      case "g": // Global PAX header
+      case 'g': // Global PAX header
         isHeaderFile = true;
         this._globalPaxHeader = PaxHeader.parse(stream.readBuffer(file.size));
         break;
-      case "x": // PAX header
+      case 'x': // PAX header
         isHeaderFile = true;
         paxHeader = PaxHeader.parse(stream.readBuffer(file.size));
         break;
@@ -317,7 +313,7 @@ class UntarFileStream {
   }
 }
 
-if (typeof self !== "undefined") {
+if (typeof self !== 'undefined') {
   // Inside the worker thread.
   self.onmessage = UntarWorker.onmessage;
 }

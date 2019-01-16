@@ -10,7 +10,6 @@ module.exports = function(config) {
     ],
 
     preprocessors: {
-      './src/untar.js': [ 'webpack' ],
       './spec/testIndex.js': [ 'webpack' ],
     },
     webpack: webpackConfig,
