@@ -18,16 +18,19 @@ module.exports = function(config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    browsers: ['Chrome'],
     browserNoActivityTimeout: 60000,
     singleRun: true,
     customLaunchers: {
-      Chrome_travis_ci: {
+      Chrome_GC: {
         base: 'Chrome',
         flags: [
           '--no-sandbox',
-          '–enable-precise-memory-info',
-          '--js-flags="--expose-gc"'
+          '--user-data-dir=/tmp',
+          '--disable-web-security',
+          '-–enable-precise-memory-info',
+          '--debug-devtools-frontend',
+          '--js-flags="--expose-gc"',
+          '--expose-gc'
         ]
       }
     },
@@ -39,9 +42,7 @@ module.exports = function(config) {
     ]
   };
 
-  if (process.env.TRAVIS) {
-    configuration.browsers = ['Chrome_travis_ci'];
-  }
+    configuration.browsers = ['Chrome_GC'];
 
   config.set(configuration)
 };

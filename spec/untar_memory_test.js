@@ -26,24 +26,23 @@ function Wait() {
 }
 
 describe('Memory', function(){
-  this.timeout(30000);
+  this.timeout(20000);
   it('Should not increase', function(done){
-    var heapSize = window.performance.memory.totalJSHeapSize;
     loadFile('base/spec/data/test.tar').then(function (data) {
       expect(data.status).to.equal(200);
       var chain = Promise.resolve();
       for(var i=0; i < 1000; ++i){
         chain = chain.then(function(){
-          // TODO: Test with a larger tar.
-          var buf = data.buffer.slice();
-          return nextPromise(buf);
+          return nextPromise(data.buffer.slice());
         }).then(Wait);
       }
+      var heapSize = window.performance.memory.totalJSHeapSize;
       chain.then(function () {
+        window.gc();
         setTimeout(function(){
-          expect(window.performance.memory.totalJSHeapSize).to.be.closeTo(heapSize, 1000, 'Unexpected heap size.');
+          expect(window.performance.memory.totalJSHeapSize).to.be.below(heapSize*1.2, 'Unexpected heap size.');
           done();
-        },5000);
+        },6000);
       }).catch(done);
     }).catch(done)
   });

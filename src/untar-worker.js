@@ -1,5 +1,5 @@
 class UntarWorker {
-
+  static utf8Decoder;
   static onmessage(message) {
     const data = message.data;
     try {
@@ -29,7 +29,7 @@ class UntarWorker {
         UntarWorker.postMessage({ type: 'e', data: file }, [file.buffer]);
       }
 
-      UntarWorker.postMessage({ type: 'c' });
+      UntarWorker.postMessage({ type: 'c'});
       tarFileStream.destroy();
     } catch (err) {
       UntarWorker.postError(err);
@@ -39,6 +39,14 @@ class UntarWorker {
 
 // Source: https://gist.github.com/pascaldekloe/62546103a1576803dade9269ccf76330
 function decodeUTF8(bytes) {
+    if(typeof TextDecoder !== undefined){
+      UntarWorker.utf8Decoder = new TextDecoder('utf-8')
+    }
+    if (UntarWorker.utf8Decoder){
+      return UntarWorker.utf8Decoder.decode(bytes);
+    }
+
+    /* For browsers not supporting TextDecoder */
     let s = '';
     let i = 0;
     const bytesLength = bytes.length;
