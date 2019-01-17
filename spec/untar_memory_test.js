@@ -15,14 +15,12 @@ function loadFile(path) {
   });
 }
 function nextPromise(buffer) {
-  return new Promise(function(resolve){
-    //console.log('next');
-    return tarHelper.untar(buffer).then(resolve);
-  });
+  return tarHelper.untar(buffer);
 }
 
 function Wait() {
-  return new Promise(function(r){ setTimeout(r, 2)});
+  window.gc();
+  return new Promise(function(r){ setImmediate(r)});
 }
 
 describe('Memory', function(){
@@ -39,10 +37,8 @@ describe('Memory', function(){
       var heapSize = window.performance.memory.totalJSHeapSize;
       chain.then(function () {
         window.gc();
-        setTimeout(function(){
-          expect(window.performance.memory.totalJSHeapSize).to.be.below(heapSize*1.2, 'Unexpected heap size.');
-          done();
-        },6000);
+        expect(window.performance.memory.totalJSHeapSize).to.be.below(heapSize*1.1, 'Unexpected heap size.');
+        done();
       }).catch(done);
     }).catch(done)
   });
