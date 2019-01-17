@@ -1,3 +1,4 @@
+/* eslint-disable quotes */
 class Untar {
   /**
    * Keeps the singleton instance.
@@ -6,7 +7,7 @@ class Untar {
    * @private
    */
   static _instance = undefined;
-  static _desiredWorkerPoolLength = 6;
+  static _desiredWorkerPoolLength = 0;
   static _workerTrimInterval = 2000;
   static CHUNK_SIZE = 1024;
 
@@ -18,7 +19,7 @@ class Untar {
   static instance() {
     if(Untar._instance === undefined) {
       if (!window.Worker) {
-        throw new Error("No Worker implementation found.");
+        throw new Error('No Worker implementation found.');
       }
       Untar._instance = new Untar();
     }
@@ -77,26 +78,25 @@ class Untar {
 
   untar = (buffer) => {
     if (!(buffer instanceof ArrayBuffer)) {
-      throw new TypeError( "arrayBuffer is not an instance of ArrayBuffer." );
+      throw new TypeError( 'arrayBuffer is not an instance of ArrayBuffer.' );
     }
 
-    const worker = this.requestWorker();
-    return new Promise((resolve, reject) => {
-      const files = [];
-
+    let worker = this.requestWorker();
+    let files = [];
+    const p = new Promise((resolve, reject) => {
       worker.onerror = (err) => {
-        reject(err);
+        return reject(err);
       };
       worker.onmessage = (message) => {
         const data = message.data;
         switch (data.type) {
-          case "l":
-            console[data.level]("Worker: " + data.message);
+          case 'l':
+            console[data.level](`Worker: ${data.message}`);
             break;
-          case "e":
+          case 'e':
             files.push(new ExtractedFile(data.data));
             break;
-          case "c":
+          case 'c':
             resolve(files);
             break;
           default:
@@ -105,19 +105,22 @@ class Untar {
             if(data.message !== undefined){
               reject(new Error(data.message));
             } else {
-              reject(new Error("Unknown worker message: " + data.type));
+              reject(new Error(`Unknown worker message: ${data.type}`));
             }
-            break;
         }
       };
-
-      // Start the unpacking of a tared resource.
-      worker.postMessage({ type: "e", buffer: buffer }, [buffer]);
     }).finally(() => {
+      // Trigger gc.
+      files = undefined;
       worker.onerror = undefined;
       worker.onmessage = undefined;
       this.returnWorker(worker);
+      worker = undefined;
     });
+
+    // Start the unpacking of a tared resource.
+    worker.postMessage({ type: 'e', buffer: buffer }, [buffer]);
+    return p;
   }
 }
 
@@ -135,7 +138,12 @@ class ExtractedFile {
     this.uid = file.uid;
     this.ustarFormat = file.ustarFormat;
   }
+
   readAsString = () => {
+    if(typeof TextDecoder !== undefined){
+      const utf8Decoder = new TextDecoder('utf-8');
+      return utf8Decoder.decode(this.buffer);
+    }
     const buffer = this.buffer;
     const charCount = buffer.byteLength;
     const bufferView = new DataView(buffer);

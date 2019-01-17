@@ -40,7 +40,7 @@ class UntarWorker {
 // Source: https://gist.github.com/pascaldekloe/62546103a1576803dade9269ccf76330
 function decodeUTF8(bytes) {
     if(typeof TextDecoder !== undefined){
-      UntarWorker.utf8Decoder = new TextDecoder('utf-8')
+      UntarWorker.utf8Decoder = new TextDecoder('utf-8');
     }
     if (UntarWorker.utf8Decoder){
       return UntarWorker.utf8Decoder.decode(bytes);

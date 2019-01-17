@@ -20,7 +20,7 @@ function nextPromise(buffer) {
 
 function Wait() {
   window.gc();
-  return new Promise(function(r){ setImmediate(r)});
+  return new Promise(function(r){ setTimeout(r,5)});
 }
 
 describe('Memory', function(){
@@ -37,8 +37,10 @@ describe('Memory', function(){
       var heapSize = window.performance.memory.totalJSHeapSize;
       chain.then(function () {
         window.gc();
-        expect(window.performance.memory.totalJSHeapSize).to.be.below(heapSize*1.1, 'Unexpected heap size.');
-        done();
+        setTimeout(function(){
+          expect(window.performance.memory.totalJSHeapSize).to.be.below(heapSize*1.1, 'Unexpected heap size.');
+          done();
+        },1000);
       }).catch(done);
     }).catch(done)
   });
