@@ -334,8 +334,9 @@ class UntarFileStream {
       paxHeader.applyHeader(file);
     }
 
-    if (longLinkNameCache != null) {
+    if (longLinkNameCache !== null && !file.isLongLink) {
       file.name = longLinkNameCache;
+      longLinkNameCache = null;
     }
 
     return file;
